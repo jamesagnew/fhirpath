@@ -8,11 +8,13 @@ grammar fhirpath;
 //term: '(' expression ')' | const | predicate;
 //op: LOGIC | COMP | '*' | '/' | '+' | '-' | '|' | '&';
 
-prog: expr (';' expr)* ';'?;
+prog: line (line)*;
+
+line: ID ( '(' predicate ')') ':' expr '\r'? '\n';
+
 //prog: expression (';' expression)* ';'?;
 
 expr:
-        expr '.' function |
         expr ('*' | '/') expr |
         expr ('+' | '-') expr |
         expr ('|' | '&') expr |
@@ -23,7 +25,7 @@ expr:
         const;
 
 predicate : item ('.' item)* ;
-item: element recurse? | function | axis_spec;
+item: element recurse? | function | axis_spec | '(' expr ')';
 element: ID CHOICE?;
 recurse: '*';
 axis_spec: '*' | '**' | '$context' | '$resource' | '$parent' ;
