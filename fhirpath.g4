@@ -5,7 +5,7 @@ grammar fhirpath;
 //version without precedence and left-recursion
 //expression: term (righthand)*;
 //righthand: op term | '.' function;
-//term: '(' expression ')' | const | predicate;
+//term: '(' expression ')' | fpconst | predicate;
 //op: LOGIC | COMP | '*' | '/' | '+' | '-' | '|' | '&';
 
 prog: line (line)*;
@@ -14,21 +14,17 @@ line: ID ( '(' predicate ')') ':' expr '\r'? '\n';
 
 //prog: expression (';' expression)* ';'?;
 
-expr:
-        expr ('*' | '/') expr |
-        expr ('+' | '-') expr |
-        expr ('|' | '&') expr |
-        expr COMP expr |
-        expr LOGIC expr |
-        '(' expr ')' |
-        predicate |
-        const;
+expr_no_binop: '(' expr ')' | predicate | fpconst;
+expr: binop | expr_no_binop;
 
-predicate : item ('.' item)* ;
+binop_operator: ( LOGIC | COMP | BOOL ) ;
+binop: expr_no_binop binop_operator expr_no_binop ;
+
+predicate : ('$context' | '$resource' | '$parent' | item) ('.' item)* ;
 item: element recurse? | function | axis_spec | '(' expr ')';
 element: ID CHOICE?;
 recurse: '*';
-axis_spec: '*' | '**' | '$context' | '$resource' | '$parent' ;
+axis_spec: '*' | '**' ;
 
 function: ID '(' param_list? ')';
 param_list: expr (',' expr)*;
@@ -37,7 +33,7 @@ param_list: expr (',' expr)*;
 //    expr |
 //    expr '..' expr;
 
-const: STRING |
+fpconst: STRING |
        '-'? NUMBER |
        BOOL |
        CONST;

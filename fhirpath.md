@@ -51,11 +51,11 @@ Note: $resource and $parent are only allowed in invariants
  
 There is a special case around the entry point, where the type of the entry point can be represented, but is optional. To illustrate this point, take the path 
 
-	telecom.where(use = 'phone').value
+	telecom.where(use = 'work').value
 
 This can be evaluated as an expression on a Patient resource, or other kind of resources. However, for natural human use, expressions are often prefixed with the name of the context in which they are used:
 
-	Patient.telecom.where(use = 'phone').value
+	Patient.telecom.where(use = 'work').value
   
 These 2 expressions have the same outcome, but when evaluating the second, the evaluation will only produce results when used on a Patient resource.
 
@@ -190,6 +190,7 @@ True if the left collection is equal to the right collection
 
 * equality is determined by comparing all the properties of the children
 * todo: does order matter in sub-collections? 
+* todo: does precision matter?
 * typically, this operator is used with a single fixed values. This means that Patient.telecom.system = 'phone' will return an empty collection if there is more than one telecom with a use typically, you'd want Patient.telecom.where(system = 'phone')</td></tr>
 </table>
 
